@@ -127,12 +127,18 @@ class BotTeleopNode(Node):
             twist.linear.x = (joy.axes[1]/2) + (joy.axes[4]/2)
             twist.angular.z = (joy.axes[0]/2) + (joy.axes[3]/2)
         elif self.controller_model ==  "PS4 Controller":
-            twist.linear.x = (joy.axes[1]/2) + (joy.axes[4]/2)
-            twist.angular.z = (joy.axes[0]/2) + (joy.axes[3]/2)
-            if(joy.axes[0] < 0.17 and joy.axes[0] > -0.17): twist.angular.z -= joy.axes[0]/2
-            if (joy.axes[3] < 0.17 and joy.axes[3] > -0.17): twist.angular.z -= joy.axes[3]/2
-            if(joy.axes[1] < 0.17 and joy.axes[1] > -0.17): twist.linear.x -= joy.axes[1]/2
-            if(joy.axes[4] < 0.17 and joy.axes[4] > -0.17): twist.linear.x -= joy.axes[4]/2
+            # Right Stick Up/Down for Forward/Backward
+            twist.linear.x = joy.axes[4]
+            
+            # Left Stick Left/Right for Turning
+            twist.angular.z = joy.axes[0]
+            
+            # Apply deadzone [ -0.17, 0.17 ]
+            if -0.17 < twist.linear.x < 0.17:
+                twist.linear.x = 0.0
+                
+            if -0.17 < twist.angular.z < 0.17:
+                twist.angular.z = 0.0
         
         self.cmd_vel_publisher.publish(twist)
 
