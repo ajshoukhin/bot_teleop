@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
         	'bot_teleop_node = bot_teleop.bot_teleop_node:main',
+        	'arm_teleop_node = bot_teleop.arm_teleop:main',
         ],
     },
 )
