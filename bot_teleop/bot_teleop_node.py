@@ -183,7 +183,7 @@ class BotTeleopNode(Node):
             
         elif self.controller_model ==  "PS4 Controller":
             # Right Stick Up/Down for Forward/Backward
-            twist.linear.x = joy.axes[4]
+            twist.linear.x = -joy.axes[4]
             # Left Stick Left/Right for Turning
             twist.angular.z = joy.axes[0]
             

@@ -27,8 +27,8 @@ class ArmTeleopNode(Node):
         # --- Settings ---
         self.DEADZONE = 0.10
         self.EXPO = 1.6
-        self.MAX_VEL = [0.8, 0.8, 0.8, 1.2, 1.2]
-        self.YAW_SPEED = 0.8
+        self.MAX_VEL = [0.3, 0.3, 0.3, 0.4, 0.4]
+        self.YAW_SPEED = 0.2
 
         # --- Internal State ---
         self.is_armed = False
@@ -126,18 +126,18 @@ class ArmTeleopNode(Node):
         ry_raw = msg.axes[4]
 
         # Apply deadzone and expo curve
-        lx = expo(dz(lx_raw, self.DEADZONE), self.EXPO)
+        lx = -expo(dz(lx_raw, self.DEADZONE), self.EXPO)
         ly = expo(dz(ly_raw, self.DEADZONE), self.EXPO)
-        rx = expo(dz(rx_raw, self.DEADZONE), self.EXPO)
+        rx = -expo(dz(rx_raw, self.DEADZONE), self.EXPO)
         ry = expo(dz(ry_raw, self.DEADZONE), self.EXPO)
         
         # D-pad for Yaw (Usually Axis 6 on PS4 in Linux)
         yaw_dir = 0.0
         if len(msg.axes) > 6:
-            if msg.axes[6] > 0.5:
-                yaw_dir = 1.0    # Left
-            elif msg.axes[6] < -0.5:
-                yaw_dir = -1.0   # Right
+            if msg.axes[7] > 0.5:
+                yaw_dir = -1.0    # Left
+            elif msg.axes[7] < -0.5:
+                yaw_dir = 1.0   # Right
 
         # Map to Joints [J0, J1, J2, J3, J4]
         vel_msg = Float64MultiArray()
