@@ -27,6 +27,7 @@ setup(
         'console_scripts': [
         	'bot_teleop_node = bot_teleop.bot_teleop_node:main',
         	'arm_teleop_node = bot_teleop.arm_teleop:main',
+        	'new_bot_teleop_node = bot_teleop.new_bot_teleop_node:main',
         ],
     },
 )

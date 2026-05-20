@@ -183,7 +183,7 @@ class BotTeleopNode(Node):
             
         elif self.controller_model ==  "PS4 Controller":
             # Right Stick Up/Down for Forward/Backward
-            twist.linear.x = -joy.axes[4]
+            twist.linear.x = joy.axes[4]
             # Left Stick Left/Right for Turning
             twist.angular.z = joy.axes[0]
             
@@ -203,16 +203,16 @@ class BotTeleopNode(Node):
             elif joy.axes[2] < -0.5: flipper_cmd.data[1] = 1 # L2 -> Down
             
             # F2 (Front Right)
-            if joy.buttons[5]: flipper_cmd.data[0] = -1   # R1 -> Up
-            elif joy.axes[5] < -0.5: flipper_cmd.data[0] = 1 # R2 -> Down
+            if joy.buttons[5]: flipper_cmd.data[0] = 1   # R1 -> Up
+            elif joy.axes[5] < -0.5: flipper_cmd.data[0] = -1 # R2 -> Down
 
             # F3 (Rear Left) - D-Pad
             if joy.axes[7] > 0.5: flipper_cmd.data[3] = 1
             elif joy.axes[7] < -0.5: flipper_cmd.data[3] = -1
 
             # F4 (Rear Right) - Triangle/Cross
-            if joy.buttons[2]: flipper_cmd.data[2] = 1
-            elif joy.buttons[0]: flipper_cmd.data[2] = -1
+            if joy.buttons[2]: flipper_cmd.data[2] = -1
+            elif joy.buttons[0]: flipper_cmd.data[2] = 1
 
         self.flipper_publisher.publish(flipper_cmd)
 
