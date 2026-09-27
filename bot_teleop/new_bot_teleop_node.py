@@ -55,8 +55,8 @@ class BotTeleopNode(Node):
         # Arm Config
         self.ARM_DEADZONE = 0.10
         self.ARM_EXPO = 1.6
-        self.ARM_MAX_VEL = [0.3, 0.3, 0.3, 0.4, 0.4]
-        self.ARM_YAW_SPEED = 0.2
+        self.ARM_MAX_VEL = [0.3, 0.6, 0.3, 0.4, 0.4]
+        self.ARM_YAW_SPEED = 0.4 #increased from 0.2 to 0.4
 
     def joy_callback(self, msg):
         self.detect_controller_model(msg)
@@ -127,14 +127,19 @@ class BotTeleopNode(Node):
 
     def switch_to_arm_mode(self):
         self.control_mode = "ARM"
-        self.get_logger().info("Switched to: ARM MODE. Press CROSS to energize.")
         
         # Safety: Stop Rover driving
         self.cmd_vel_publisher.publish(Twist()) 
         
+        # --- NEW: Auto-Arm on Mode Switch ---
+        if not self.arm_enabled:
+            self.arm_enabled = True
+            self.arm_enable_pub.publish(Bool(data=True))
+            self.get_logger().info("Switched to: ARM MODE (Auto-Energized).")
+        
         # Update Indicator
         msg = String()
-        msg.data = "Blue -> Arm Mode (Press X to Arm)"
+        msg.data = "Blue -> Arm Mode (ARMED)"
         self.indicator_publisher.publish(msg)
 
     def switch_to_drive_mode(self):
@@ -239,7 +244,7 @@ class BotTeleopNode(Node):
         lx = expo(dz(-joy.axes[0], self.ARM_DEADZONE), self.ARM_EXPO) 
         ly = expo(dz(joy.axes[1], self.ARM_DEADZONE), self.ARM_EXPO) 
         rx = expo(dz(-joy.axes[3], self.ARM_DEADZONE), self.ARM_EXPO) 
-        ry = expo(dz(joy.axes[4], self.ARM_DEADZONE), self.ARM_EXPO)
+        ry = expo(dz(-joy.axes[4], self.ARM_DEADZONE), self.ARM_EXPO) #md 3/7/26
         
         yaw_dir = 0.0
         # Check explicitly for Axis 6 to prevent silent stall burnout
@@ -251,8 +256,8 @@ class BotTeleopNode(Node):
         vel_msg.data = [
             lx * self.ARM_MAX_VEL[0],
             ly * self.ARM_MAX_VEL[1],
-            ry * self.ARM_MAX_VEL[2],
-            rx * self.ARM_MAX_VEL[3],
+            ry * self.ARM_MAX_VEL[3], #2
+            rx * self.ARM_MAX_VEL[2], #3
             yaw_dir * self.ARM_YAW_SPEED
         ]
         self.arm_vel_pub.publish(vel_msg)
